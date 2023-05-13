@@ -1,0 +1,32 @@
+:root {
+  font-family: system-ui, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  font-size: 6.25%;
+
+  color-scheme: light dark;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+
+  --text-color: #fff;
+  --bg-color: #000;
+}
+
+body {
+  margin: 0;
+  color: var(--text-color);
+  background-color: var(--bg-color);
+  min-height: 100dvh;
+  font-size: 16rem;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --text-color: #000;
+    --bg-color: #fff;
+  }
+}
