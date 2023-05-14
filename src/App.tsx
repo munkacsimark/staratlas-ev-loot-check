@@ -1,43 +1,28 @@
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 import {
   updateThemeOnDocument,
   watchForThemeChange,
   stoptWatchingForThemeChange,
-  getTheme,
-  themes,
-  setTheme,
-  clearTheme,
 } from "./theme";
+import Header from "./layout/header/Header";
+import Main from "./layout/main/Main";
+import Footer from "./layout/footer/Footer";
 
 const App = () => {
   // handling theme
-  useEffect(() => {
+  useLayoutEffect(() => {
     updateThemeOnDocument();
     watchForThemeChange();
+
     return stoptWatchingForThemeChange;
   }, []);
 
-  const handleToggleTheme = () => {
-    setTheme(getTheme() === themes.DARK ? themes.LIGHT : themes.DARK);
-  };
-
-  const handleClearTheme = () => clearTheme();
-
   return (
-    <div className="bg-white dark:bg-black text-black dark:text-white">
-      <button
-        className="rounded-full border-black bg-blue-400 p-1"
-        onClick={handleToggleTheme}
-      >
-        TOGGLE THEME
-      </button>
-      <button
-        className="rounded-full border-black bg-blue-400 p-1"
-        onClick={handleClearTheme}
-      >
-        CLEAR THEME
-      </button>
-    </div>
+    <>
+      <Header />
+      <Main />
+      <Footer />
+    </>
   );
 };
 

@@ -1,0 +1,73 @@
+.dorpdownMenu {
+  @apply relative
+    inline-block
+    text-left;
+}
+
+.dropdownMenuButton {
+  @apply inline-flex
+    w-full
+    justify-center
+    gap-x-1.5
+    rounded-md
+    bg-gray-100
+    dark:bg-gray-900
+    px-3
+    py-2
+    text-sm
+    font-semibold
+    text-gray-900
+    dark:text-gray-100
+    shadow-sm
+    ring-1
+    ring-inset
+    ring-gray-300
+    dark:ring-gray-700
+    hover:bg-gray-50
+    dark:hover:bg-gray-950;
+}
+
+.dropdownMenuItems {
+  @apply absolute
+    right-0
+    z-10
+    mt-2
+    w-fit
+    py-1
+    origin-top-right
+    rounded-md
+    bg-gray-50
+    dark:bg-gray-800
+    shadow-lg
+    ring-1
+    ring-black
+    ring-opacity-5
+    focus:outline-none;
+}
+
+.dropdownMenuItem {
+  @apply px-4
+    py-2
+    flex
+    flex-row
+    cursor-pointer
+    text-gray-700;
+}
+
+.dropdownMenuItemActive {
+  @apply bg-gray-100
+    text-gray-900;
+}
+
+.dropdownMenuItemText {
+  @apply capitalize
+    text-sm
+    ml-2;
+}
+
+.icon {
+  @apply h-5
+    w-5
+    text-gray-400
+    dark:text-gray-600;
+}
