@@ -3,6 +3,7 @@ import { Tabs, Text } from "@geist-ui/core";
 import { pageData, pages } from "../../pages/pageContext";
 import type { Page } from "../../pages/pageContext";
 import usePage from "../../pages/usePage";
+import styles from "./HeaderMenu.module.css";
 
 const isPage = (value: string): value is Page =>
   Object.values(pages)
@@ -26,6 +27,11 @@ const HeaderMenu = () => {
       initialValue={pageData[0].name}
       onChange={handleChange}
       align="center"
+      width="100%"
+      hideDivider
+      hideBorder
+      leftSpace={0}
+      className={styles.tabs}
     >
       {pageData.map(({ name, icon }) => (
         <Tabs.Item

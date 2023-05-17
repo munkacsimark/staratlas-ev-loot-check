@@ -1,0 +1,4 @@
+/* HACK to remove generated unused div */
+.tabs > div {
+  display: none;
+}
