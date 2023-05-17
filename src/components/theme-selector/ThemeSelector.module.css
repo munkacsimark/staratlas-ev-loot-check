@@ -1,0 +1,9 @@
+.select {
+  text-transform: capitalize;
+}
+
+.selectOption {
+  display: flex;
+  align-items: center;
+  text-transform: capitalize;
+}

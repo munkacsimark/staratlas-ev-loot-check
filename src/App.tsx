@@ -1,28 +1,18 @@
-import { useLayoutEffect } from "react";
-import {
-  updateThemeOnDocument,
-  watchForThemeChange,
-  stoptWatchingForThemeChange,
-} from "./theme";
+import { Page } from "@geist-ui/core";
 import Header from "./layout/header/Header";
 import Main from "./layout/main/Main";
 import Footer from "./layout/footer/Footer";
+import ThemeProvider from "./theme/ThemeProvider";
 
 const App = () => {
-  // handling theme
-  useLayoutEffect(() => {
-    updateThemeOnDocument();
-    watchForThemeChange();
-
-    return stoptWatchingForThemeChange;
-  }, []);
-
   return (
-    <>
-      <Header />
-      <Main />
-      <Footer />
-    </>
+    <ThemeProvider>
+      <Page dotBackdrop>
+        <Header />
+        <Main />
+        <Footer />
+      </Page>
+    </ThemeProvider>
   );
 };
 
