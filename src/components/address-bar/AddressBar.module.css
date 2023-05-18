@@ -1,0 +1,22 @@
+.form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 1rem auto;
+  flex-wrap: wrap;
+}
+
+.input {
+  margin-right: 1rem;
+}
+
+@media (max-width: 650px) {
+  .form {
+    flex-direction: column;
+  }
+
+  .input {
+    margin-right: 0;
+    margin-bottom: 1rem;
+  }
+}

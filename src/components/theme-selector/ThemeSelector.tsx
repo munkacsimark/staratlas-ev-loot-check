@@ -29,8 +29,7 @@ const ThemeToggle = () => {
 
   const handleSelectTheme = (selectedTheme: string | string[]) => {
     if (typeof selectedTheme !== "string") {
-      console.error(`Multiple selection is not supported.`);
-      return;
+      throw Error(`Multiple selection is not supported.`);
     }
 
     if (!isSelectableTheme(selectedTheme)) {

@@ -1,0 +1,18 @@
+.tableContainer {
+  margin: 2rem 0;
+}
+
+.limitSelect {
+  display: flex;
+  margin: 1rem 0;
+  align-items: center;
+}
+
+.limitSelectLabel {
+  margin-right: 1rem;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+}

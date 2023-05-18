@@ -4,12 +4,7 @@ import usePage from "../../pages/usePage";
 const Main = () => {
   const { page } = usePage();
 
-  return (
-    <Page.Content>
-      {page.name}
-      {page.content()}
-    </Page.Content>
-  );
+  return <Page.Content pt={"1rem"}>{page.content()}</Page.Content>;
 };
 
 export default Main;

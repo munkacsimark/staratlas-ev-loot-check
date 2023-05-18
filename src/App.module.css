@@ -1,6 +1,6 @@
 /* HACK to target generated main element */
 .page > main {
-  padding-top: 1rem;
+  padding-top: 1rem !important;
 }
 
 @media (max-width: 650px) {
