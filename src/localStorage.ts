@@ -16,11 +16,19 @@ const getTheme = (): Theme => localStorage[LOCAL_STORAGE_THEME_KEY];
 const getAddresses = (): string[] =>
   JSON.parse(localStorage.getItem(LOCAL_STORAGE_ADDRESSES_KEY) || "[]");
 
-const saveAddress = (address: string) =>
+const isAddressSaved = (address: string) => getAddresses().includes(address);
+
+const saveAddress = (address: string) => {
+  if (isAddressSaved(address)) {
+    return;
+  }
+
+  const addressesToSave = Array.from(new Set([address, ...getAddresses()]));
   localStorage.setItem(
     LOCAL_STORAGE_ADDRESSES_KEY,
-    JSON.stringify([address, ...getAddresses()])
+    JSON.stringify(addressesToSave)
   );
+};
 
 const removeAddress = (address: string) => {
   localStorage.setItem(
@@ -38,4 +46,5 @@ export {
   saveAddress,
   getAddresses,
   removeAddress,
+  isAddressSaved,
 };

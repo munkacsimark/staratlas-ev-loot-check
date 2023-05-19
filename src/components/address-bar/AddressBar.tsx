@@ -1,50 +1,78 @@
-import { FormEvent, FunctionComponent, MouseEvent, useState } from "react";
-import { Button, AutoComplete, Checkbox, Text, Tooltip } from "@geist-ui/core";
-import { QuestionCircle, Delete } from "@geist-ui/icons";
-import { isSolanaAddress } from "../../helpers";
 import {
-  getAddresses,
-  removeAddress,
-  saveAddress as saveAddressToLocalStorage,
-} from "../../localStorage";
+  FormEvent,
+  FunctionComponent,
+  MouseEvent,
+  useEffect,
+  useState,
+} from "react";
+import {
+  Button,
+  AutoComplete,
+  Checkbox,
+  Text,
+  Tooltip,
+  Input,
+  Toggle,
+} from "@geist-ui/core";
+import type { AutoCompleteProps, InputProps } from "@geist-ui/core";
+import { QuestionCircle, Delete } from "@geist-ui/icons";
+import { getAddresses, removeAddress } from "../../localStorage";
 import styles from "./AddressBar.module.css";
+import { Card } from "@geist-ui/core";
 
 const ADDRESS_PROP_NAME = "solanaAddress";
 const SAVE_ADDRESS_PROP_NAME = "save-solanaAddress";
 
 type AddressBarProps = {
-  onSearch: (address: string) => void;
+  isSearchError: boolean;
+  savedAddresses: string[];
+  isAutoRefreshEnabled: boolean;
+  onSearch: ({ address, save }: { address: string; save: boolean }) => void;
+  onInputChange: () => void;
+  onAutoRefreshChange: (checked: boolean) => void;
 };
 
 const addressesToOptions = (addresses: string[]) =>
   addresses.map((address) => ({ label: address, value: address }));
 
-const AddressBar: FunctionComponent<AddressBarProps> = ({ onSearch }) => {
-  const [error, setError] = useState<string | null>(null);
+const AddressBar: FunctionComponent<AddressBarProps> = ({
+  isSearchError,
+  savedAddresses,
+  isAutoRefreshEnabled,
+  onSearch,
+  onInputChange,
+  onAutoRefreshChange,
+}) => {
   const [addressOptions, setAddressOptions] = useState(
-    addressesToOptions(getAddresses())
+    addressesToOptions(savedAddresses)
   );
 
-  const createAutocompleteOptions = ({
+  useEffect(() => {
+    setAddressOptions(addressesToOptions(savedAddresses));
+  }, [savedAddresses]);
+
+  const createAutocompleteOption = ({
     value,
     label,
   }: {
     value: string;
     label: string;
   }) => (
-    <AutoComplete.Option value={value} className={styles.autocompleteOption}>
-      <Text className={styles.autocompleteOptionText}>{label}</Text>
-      <Delete
-        onClick={(event: MouseEvent<SVGElement>) => {
-          event.stopPropagation();
-          removeAddress(value);
-          setAddressOptions((currentOptions) =>
-            currentOptions.filter((option) => option.value !== value)
-          );
-        }}
-        size={32}
-        className={styles.autocompleteOptionDelete}
-      />
+    <AutoComplete.Option value={value}>
+      <div className={styles.autocompleteOptionContainer}>
+        <Text className={styles.autocompleteOptionText}>{label}</Text>
+        <Delete
+          onClick={(event: MouseEvent<SVGElement>) => {
+            event.stopPropagation();
+            removeAddress(value);
+            setAddressOptions((currentOptions) =>
+              currentOptions.filter((option) => option.value !== value)
+            );
+          }}
+          size={16}
+          className={styles.autocompleteOptionDelete}
+        />
+      </div>
     </AutoComplete.Option>
   );
 
@@ -52,55 +80,71 @@ const AddressBar: FunctionComponent<AddressBarProps> = ({ onSearch }) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
 
-    const address = formData.get(ADDRESS_PROP_NAME);
-    const saveAddress = formData.get(SAVE_ADDRESS_PROP_NAME);
+    onSearch({
+      address: formData.get(ADDRESS_PROP_NAME)?.toString() || "",
+      save: !!formData.get(SAVE_ADDRESS_PROP_NAME),
+    });
+  };
 
-    if (address === null) {
-      throw Error("Error while getting address from form data.");
-    }
-
-    const addressString = address.toString();
-    if (!isSolanaAddress(addressString)) {
-      setError("Invalid Solana address");
-      return;
-    }
-
-    if (saveAddress && !!saveAddress) {
-      saveAddressToLocalStorage(addressString);
-      setAddressOptions((currentOptions) => [
-        { value: addressString, label: addressString },
-        ...currentOptions,
-      ]);
-    }
-
-    onSearch(addressString);
+  const inputProps: Partial<AutoCompleteProps & InputProps> = {
+    height: "2.6rem",
+    placeholder: "Address",
+    name: ADDRESS_PROP_NAME,
+    type: isSearchError ? "error" : "default",
+    width: "100%",
+    clearable: true,
+    onChange: onInputChange,
   };
 
   return (
     <>
       <form onSubmit={handleSubmit} className={styles.form}>
-        <AutoComplete
-          placeholder="Address"
-          options={addressOptions.map(createAutocompleteOptions)}
-          name={ADDRESS_PROP_NAME}
-          type={error ? "error" : "default"}
-          onChange={() => setError(null)}
-          className={styles.input}
-        />
-        <Button htmlType="submit" disabled={!!error} mr={"1rem"}>
+        <div className={styles.autocompleteContainer}>
+          {addressOptions.length === 0 ? (
+            <Input {...inputProps} />
+          ) : (
+            <AutoComplete
+              {...inputProps}
+              options={addressOptions.map(createAutocompleteOption)}
+            />
+          )}
+        </div>
+        <Button
+          htmlType="submit"
+          type="success"
+          ghost
+          disabled={!!isSearchError}
+          mr={"1rem"}
+        >
           Fetch loot
         </Button>
+
         <div className={styles.saveAddressContainer}>
-          <Checkbox name={SAVE_ADDRESS_PROP_NAME}>Save address</Checkbox>
-          <Tooltip
-            text="Saves your address locally to be able to use it quickly in input."
-            className={styles.tooltip}
-          >
-            <QuestionCircle size={16} />
-          </Tooltip>
+          <Card>
+            <Checkbox name={SAVE_ADDRESS_PROP_NAME}>Save address</Checkbox>
+            <Tooltip
+              text="Saves your address locally to be able to select it quickly."
+              className={styles.tooltip}
+            >
+              <QuestionCircle size={16} />
+            </Tooltip>
+          </Card>
+        </div>
+
+        <div className={styles.toggleAutorefrechContainer}>
+          <Card>
+            <Toggle
+              checked={isAutoRefreshEnabled}
+              onChange={({ target: { checked } }) =>
+                onAutoRefreshChange(checked)
+              }
+            />
+            <Text small className={styles.autoRefreshText}>
+              Auto refresh
+            </Text>
+          </Card>
         </div>
       </form>
-      {error && <Text type="error">{error}</Text>}
     </>
   );
 };

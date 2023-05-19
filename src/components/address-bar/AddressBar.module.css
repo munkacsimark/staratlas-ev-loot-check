@@ -6,23 +6,26 @@
   flex-wrap: wrap;
 }
 
-.input {
+.autocompleteContainer {
   margin-right: 1rem;
+  flex-grow: 1;
 }
 
 .saveAddressContainer {
   display: flex;
   align-items: center;
+  margin-right: 1rem;
 }
 
 .tooltip {
   margin-left: 0.2rem;
 }
 
-.autocompleteOption {
+.autocompleteOptionContainer {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  width: 100%;
 }
 
 .autocompleteOptionText {
@@ -30,8 +33,24 @@
   text-overflow: ellipsis;
 }
 
+.autocompleteOptionDelete {
+  text-align: right;
+  flex-shrink: 0;
+}
+
 .autocompleteOptionDelete:hover {
   stroke: #e00;
+}
+
+.toggleAutorefrechContainer > div > div {
+  display: flex;
+  align-items: center;
+}
+
+.autoRefreshText {
+  display: flex;
+  align-items: baseline;
+  margin-left: 0.2rem;
 }
 
 @media (max-width: 650px) {
@@ -39,12 +58,17 @@
     flex-direction: column;
   }
 
-  .input {
+  .autocompleteContainer {
     margin-right: 0;
     margin-bottom: 1rem;
   }
 
   .saveAddressContainer {
+    margin-right: 0;
     margin-top: 1rem;
+  }
+
+  .errorText {
+    text-align: center;
   }
 }

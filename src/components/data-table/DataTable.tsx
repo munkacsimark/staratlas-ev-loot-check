@@ -69,7 +69,11 @@ const DataTable: FunctionComponent<DataTableProps> = ({ data }) => {
   };
 
   if (data.length === 0) {
-    return <Text>No loot found for this address.</Text>;
+    return (
+      <Text type="warning" className={styles.notFoundText}>
+        No loot found for this address.
+      </Text>
+    );
   }
 
   return (
