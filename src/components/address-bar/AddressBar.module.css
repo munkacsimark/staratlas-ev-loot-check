@@ -47,6 +47,10 @@
   align-items: center;
 }
 
+.fetchButtonContainer {
+  margin-right: 1rem;
+}
+
 .autoRefreshText {
   display: flex;
   align-items: baseline;
@@ -63,6 +67,10 @@
     margin-bottom: 1rem;
   }
 
+  .fetchButtonContainer {
+    margin-right: 0;
+  }
+
   .saveAddressContainer {
     margin-right: 0;
     margin-top: 1rem;
@@ -70,5 +78,9 @@
 
   .errorText {
     text-align: center;
+  }
+
+  .toggleAutorefrechContainer {
+    margin-top: 1rem;
   }
 }

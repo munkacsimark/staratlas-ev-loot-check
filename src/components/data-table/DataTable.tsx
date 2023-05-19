@@ -1,7 +1,15 @@
 import { FunctionComponent, useState } from "react";
-import { Pagination, Select, Table, Tooltip, Text } from "@geist-ui/core";
+import {
+  Pagination,
+  Select,
+  Table,
+  Tooltip,
+  Text,
+  useMediaQuery,
+} from "@geist-ui/core";
 import { ChevronRightCircle, ChevronLeftCircle } from "@geist-ui/icons";
 import { formatDateToElapsed, formatDateToHumanReadable } from "../../helpers";
+import type { LootResponseItem } from "../../api";
 import styles from "./DataTable.module.css";
 
 const listLimitOptions = {
@@ -13,7 +21,7 @@ const listLimitOptions = {
 } as const;
 
 type DataTableProps = {
-  data: LootItem[];
+  data: LootResponseItem[];
 };
 
 type LootItem = {
@@ -24,26 +32,58 @@ type LootItem = {
   discovered: Date;
 };
 
-const generateTableColumns = (data: LootItem) => {
-  const keys = Object.keys(data);
-  return keys.map((key) => <Table.Column key={key} prop={key} label={key} />);
+type MobileOrNormalLootItem = Pick<
+  LootItem,
+  "name" | "quantity" | "discovered"
+> &
+  Partial<Pick<LootItem, "rarity" | "spawned">>;
+
+const generateTableColumns = (data: MobileOrNormalLootItem) =>
+  Object.keys(data).map((key) => (
+    <Table.Column key={key} prop={key} label={key} />
+  ));
+
+const formatDataForTable = (data: LootResponseItem[], isSmallScreen: boolean) =>
+  data.map(({ name, quantity, rarity, spawnTimestamp, discoverTimestamp }) => ({
+    name,
+    quantity,
+    ...(isSmallScreen ? {} : { rarity }),
+    ...(isSmallScreen ? {} : { spawned: new Date(spawnTimestamp * 1000) }),
+    discovered: new Date(discoverTimestamp * 1000),
+  }));
+
+const formatDataItemForTable = (
+  data: MobileOrNormalLootItem,
+  isSmallScreen: boolean
+) => {
+  const { name, quantity, rarity, spawned, discovered } = data;
+
+  return {
+    name,
+    quantity,
+    ...(rarity && !isSmallScreen ? { rarity } : {}),
+    ...(spawned && !isSmallScreen
+      ? {
+          spawned: (
+            <Tooltip text={formatDateToElapsed(spawned)}>
+              {formatDateToHumanReadable(spawned)}
+            </Tooltip>
+          ),
+        }
+      : {}),
+    discovered: isSmallScreen ? (
+      formatDateToElapsed(discovered)
+    ) : (
+      <Tooltip text={formatDateToElapsed(discovered)}>
+        {formatDateToHumanReadable(discovered)}
+      </Tooltip>
+    ),
+  };
 };
 
-const formatDataItemForTable = (data: LootItem) => ({
-  ...data,
-  spawned: (
-    <Tooltip text={formatDateToElapsed(data.spawned)}>
-      {formatDateToHumanReadable(data.spawned)}
-    </Tooltip>
-  ),
-  discovered: (
-    <Tooltip text={formatDateToElapsed(data.discovered)}>
-      {formatDateToHumanReadable(data.discovered)}
-    </Tooltip>
-  ),
-});
-
 const DataTable: FunctionComponent<DataTableProps> = ({ data }) => {
+  const isSmallScreen = useMediaQuery("sm", { match: "down" });
+
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [listLimit, setListLimit] = useState<string>(listLimitOptions.TEN);
 
@@ -55,7 +95,7 @@ const DataTable: FunctionComponent<DataTableProps> = ({ data }) => {
     setListLimit(limit);
   };
 
-  const filterDataItems = (data: LootItem[]) => {
+  const filterDataItems = (data: MobileOrNormalLootItem[]) => {
     if (listLimit === listLimitOptions.ALL) {
       return data;
     }
@@ -76,11 +116,17 @@ const DataTable: FunctionComponent<DataTableProps> = ({ data }) => {
     );
   }
 
+  const tableData = formatDataForTable(data, isSmallScreen);
+
   return (
     <>
       <div className={styles.tableContainer}>
-        <Table data={filterDataItems(data).map(formatDataItemForTable)}>
-          {generateTableColumns(data[0])}
+        <Table
+          data={filterDataItems(tableData).map((item) =>
+            formatDataItemForTable(item, isSmallScreen)
+          )}
+        >
+          {generateTableColumns(tableData[0])}
         </Table>
       </div>
       <div className={styles.limitSelect}>

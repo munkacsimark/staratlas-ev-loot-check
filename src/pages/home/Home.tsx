@@ -5,11 +5,12 @@ import type { LootResponseItem } from "../../api";
 import AddressBar from "../../components/address-bar/AddressBar";
 import FilterBar from "../../components/filter-bar/FilterBar";
 import DataTable from "../../components/data-table/DataTable";
-import { formatDataForTable, isSolanaAddress } from "../../helpers";
+import { isSolanaAddress } from "../../helpers";
 import { getAddresses, isAddressSaved, saveAddress } from "../../localStorage";
 import styles from "./Home.module.css";
 
 const REFRESH_INTERVAL_TIME = 30; // sec
+const AUTO_REFRESH_ENABLED = true;
 
 const HomePage = () => {
   const [lootData, setLootData] = useState<LootResponseItem[]>();
@@ -18,18 +19,14 @@ const HomePage = () => {
   const [currentAddressToSearch, setCurrentAddressToSearch] =
     useState<string>();
   const [savedAddresses, setSavedAddresses] = useState(getAddresses());
-  const [isAutoRefreshEnabled, setIsAutoRefreshEnabled] = useState(false);
-  const [activeIntervalId, setActiveIntervalId] = useState<number>();
+  const [isAutoRefreshEnabled, setIsAutoRefreshEnabled] =
+    useState(AUTO_REFRESH_ENABLED);
   const [refreshCounter, setRefreshCounter] = useState(REFRESH_INTERVAL_TIME);
 
   useEffect(() => {
-    if (activeIntervalId !== null) {
-      window.clearInterval(activeIntervalId);
-      setActiveIntervalId(undefined);
-      setRefreshCounter(REFRESH_INTERVAL_TIME);
-    }
+    setRefreshCounter(REFRESH_INTERVAL_TIME);
 
-    if (!isAutoRefreshEnabled || !currentAddressToSearch) {
+    if (!currentAddressToSearch || !isAutoRefreshEnabled) {
       return;
     }
 
@@ -37,7 +34,7 @@ const HomePage = () => {
       setRefreshCounter((counter) => counter - 1);
     }, 1000);
 
-    setActiveIntervalId(intervalId);
+    return () => window.clearInterval(intervalId);
   }, [isAutoRefreshEnabled, currentAddressToSearch]);
 
   useEffect(() => {
@@ -47,7 +44,7 @@ const HomePage = () => {
 
     fetchData(currentAddressToSearch);
     setRefreshCounter(REFRESH_INTERVAL_TIME);
-  }, [refreshCounter]);
+  }, [refreshCounter, currentAddressToSearch]);
 
   const fetchData = async (address: string) => {
     setIsFetching(true);
@@ -113,7 +110,7 @@ const HomePage = () => {
         >{`Auto refresh in ${refreshCounter} sec.`}</Text>
       )}
       {isFetching && <Loading>Fetching data</Loading>}
-      {lootData && !error && <DataTable data={formatDataForTable(lootData)} />}
+      {lootData && !error && <DataTable data={lootData} />}
     </>
   );
 };

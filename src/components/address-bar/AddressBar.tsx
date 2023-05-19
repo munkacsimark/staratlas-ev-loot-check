@@ -13,12 +13,12 @@ import {
   Tooltip,
   Input,
   Toggle,
+  Card,
 } from "@geist-ui/core";
 import type { AutoCompleteProps, InputProps } from "@geist-ui/core";
 import { QuestionCircle, Delete } from "@geist-ui/icons";
-import { getAddresses, removeAddress } from "../../localStorage";
+import { removeAddress } from "../../localStorage";
 import styles from "./AddressBar.module.css";
-import { Card } from "@geist-ui/core";
 
 const ADDRESS_PROP_NAME = "solanaAddress";
 const SAVE_ADDRESS_PROP_NAME = "save-solanaAddress";
@@ -109,15 +109,17 @@ const AddressBar: FunctionComponent<AddressBarProps> = ({
             />
           )}
         </div>
-        <Button
-          htmlType="submit"
-          type="success"
-          ghost
-          disabled={!!isSearchError}
-          mr={"1rem"}
-        >
-          Fetch loot
-        </Button>
+
+        <div className={styles.fetchButtonContainer}>
+          <Button
+            htmlType="submit"
+            type="success"
+            ghost
+            disabled={!!isSearchError}
+          >
+            Fetch loot
+          </Button>
+        </div>
 
         <div className={styles.saveAddressContainer}>
           <Card>
