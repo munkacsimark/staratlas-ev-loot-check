@@ -6,9 +6,15 @@ import {
   Tooltip,
   Text,
   useMediaQuery,
+  Button,
 } from "@geist-ui/core";
 import { ChevronRightCircle, ChevronLeftCircle } from "@geist-ui/icons";
-import { formatDateToElapsed, formatDateToHumanReadable } from "../../helpers";
+import {
+  convertToCSV,
+  downloadCSV,
+  formatDateToElapsed,
+  formatDateToHumanReadable,
+} from "../../helpers";
 import type { LootResponseItem } from "../../api";
 import styles from "./DataTable.module.css";
 
@@ -95,6 +101,12 @@ const DataTable: FunctionComponent<DataTableProps> = ({ data }) => {
     setListLimit(limit);
   };
 
+  const handleDownload = () => {
+    const tableData = formatDataForTable(data, false);
+    const csvString = convertToCSV(tableData as LootItem[]);
+    downloadCSV(csvString, `star-atlas-ev-rewards-${Date.now()}.csv`);
+  };
+
   const filterDataItems = (data: MobileOrNormalLootItem[]) => {
     if (listLimit === listLimitOptions.ALL) {
       return data;
@@ -129,15 +141,18 @@ const DataTable: FunctionComponent<DataTableProps> = ({ data }) => {
           {generateTableColumns(tableData[0])}
         </Table>
       </div>
-      <div className={styles.limitSelect}>
-        <Text className={styles.limitSelectLabel}>Show entries:</Text>
-        <Select initialValue={listLimit} onChange={handleListLimitChange}>
-          {Object.values(listLimitOptions).map((limitOption) => (
-            <Select.Option key={limitOption} value={limitOption}>
-              {limitOption}
-            </Select.Option>
-          ))}
-        </Select>
+      <div className={styles.tableFooter}>
+        <div className={styles.limitSelect}>
+          <Text className={styles.limitSelectLabel}>Show entries:</Text>
+          <Select initialValue={listLimit} onChange={handleListLimitChange}>
+            {Object.values(listLimitOptions).map((limitOption) => (
+              <Select.Option key={limitOption} value={limitOption}>
+                {limitOption}
+              </Select.Option>
+            ))}
+          </Select>
+        </div>
+        <Button onClick={handleDownload}>Download as CSV</Button>
       </div>
       {listLimit !== listLimitOptions.ALL && (
         <Pagination

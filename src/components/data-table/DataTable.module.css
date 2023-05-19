@@ -2,9 +2,14 @@
   margin: 2rem 0;
 }
 
-.limitSelect {
+.tableFooter {
   display: flex;
   margin: 1rem 0;
+  justify-content: space-between;
+}
+
+.limitSelect {
+  display: flex;
   align-items: center;
 }
 
