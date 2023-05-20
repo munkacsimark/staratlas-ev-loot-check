@@ -1,13 +1,20 @@
-import { useEffect, useState } from "react";
-import { Loading, Text } from "@geist-ui/core";
+import { Suspense, lazy, useEffect, useState } from "react";
+import { Input, Loading, Text } from "@geist-ui/core";
 import { fetchLoot } from "../../api";
 import type { LootResponseItem } from "../../api";
-import AddressBar from "../../components/address-bar/AddressBar";
-import FilterBar from "../../components/filter-bar/FilterBar";
-import DataTable from "../../components/data-table/DataTable";
 import { isSolanaAddress } from "../../helpers";
 import { getAddresses, isAddressSaved, saveAddress } from "../../localStorage";
 import styles from "./Home.module.css";
+
+const DynamicAddressBar = lazy(
+  () => import("../../components/address-bar/AddressBar")
+);
+const DynamicFilterBar = lazy(
+  () => import("../../components/filter-bar/FilterBar")
+);
+const DynamicDataTable = lazy(
+  () => import("../../components/data-table/DataTable")
+);
 
 const REFRESH_INTERVAL_TIME = 30; // sec
 const AUTO_REFRESH_ENABLED = true;
@@ -93,16 +100,27 @@ const HomePage = () => {
 
   return (
     <>
-      <AddressBar
-        isSearchError={!!error}
-        savedAddresses={savedAddresses}
-        isAutoRefreshEnabled={isAutoRefreshEnabled}
-        onSearch={handleSearch}
-        onInputChange={() => setError(null)}
-        onAutoRefreshChange={setIsAutoRefreshEnabled}
-      />
+      <Suspense
+        fallback={
+          <Input
+            height={"2.6rem"}
+            placeholder="Address"
+            width={"100%"}
+            disabled
+          />
+        }
+      >
+        <DynamicAddressBar
+          isSearchError={!!error}
+          savedAddresses={savedAddresses}
+          isAutoRefreshEnabled={isAutoRefreshEnabled}
+          onSearch={handleSearch}
+          onInputChange={() => setError(null)}
+          onAutoRefreshChange={setIsAutoRefreshEnabled}
+        />
+      </Suspense>
       {error && <Text type="error">{error}</Text>}
-      {false && <FilterBar />}
+      {false && <DynamicFilterBar />}
       {!isFetching && isAutoRefreshEnabled && !!currentAddressToSearch && (
         <Text
           font={"0.8rem"}
@@ -110,7 +128,11 @@ const HomePage = () => {
         >{`Auto refresh in ${refreshCounter} sec.`}</Text>
       )}
       {isFetching && <Loading>Fetching data</Loading>}
-      {lootData && !error && <DataTable data={lootData} />}
+      {lootData && !error && (
+        <Suspense>
+          <DynamicDataTable data={lootData} />
+        </Suspense>
+      )}
     </>
   );
 };

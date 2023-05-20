@@ -1,6 +1,27 @@
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* HACK to target generated main element */
 .page > main {
   padding-top: 1rem !important;
+}
+
+.loaderContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.loader {
+  animation: rotate 2s infinite linear;
+  margin: auto;
 }
 
 @media (max-width: 650px) {

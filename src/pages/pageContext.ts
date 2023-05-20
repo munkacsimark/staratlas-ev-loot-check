@@ -1,8 +1,6 @@
 import { createContext } from "react";
 import { Info, Home } from "@geist-ui/icons";
 import type { Icon } from "@geist-ui/icons";
-import AboutPage from "./about/About";
-import HomePage from "./home/Home";
 
 const pages = {
   HOME: "home",
@@ -14,19 +12,16 @@ type Page = (typeof pages)[keyof typeof pages];
 type PageData = {
   name: Page;
   icon: Icon;
-  content: () => JSX.Element;
 };
 
 const pageData: PageData[] = [
   {
     name: pages.HOME,
     icon: Home,
-    content: HomePage,
   },
   {
     name: pages.ABOUT,
     icon: Info,
-    content: AboutPage,
   },
 ];
 
