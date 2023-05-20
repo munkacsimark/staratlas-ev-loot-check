@@ -1,9 +1,7 @@
-.footerText {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+.footer {
+  left: 0;
 }
 
-.heart {
-  margin: 0 0.5rem;
+.footerText {
+  text-align: center;
 }

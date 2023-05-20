@@ -4,11 +4,10 @@ import styles from "./Footer.module.css";
 
 const Footer = () => {
   return (
-    <Page.Footer>
+    <Page.Footer className={styles.footer}>
       <Text className={styles.footerText}>
         Made with{" "}
-        <HeartFill size="16" className={styles.heart} color="#f5a623" />{" "}
-        by&nbsp;{" "}
+        <HeartFill size="16" className={styles.heart} color="#f5a623" /> by{" "}
         <Link href="https://codermark.dev/" target="_blank" underline>
           me
         </Link>
